@@ -1,0 +1,21 @@
+image: node:latest
+
+clone:
+    depth: 50
+
+pipelines:
+    branches:
+        master:
+            - step:
+                script:
+                    - npm install && npm test
+            - step:
+                  name: Whitesource Scan
+                  image: pbeovdev/eov_security_scanner:latest
+                  script:
+                      - envsubst < .whitesource.conf > /tmp/whitesource.conf
+                      - java -jar /wss-unified-agent.jar -c /tmp/whitesource.conf
+        develop:
+            - step:
+                script:
+                    - npm install && npm test
